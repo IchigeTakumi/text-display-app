@@ -16,7 +16,7 @@ const startButton = document.getElementById("startButton");
 const pauseButton = document.getElementById("pauseButton");
 const stopButton = document.getElementById("stopButton");
 
-// データ保存と復元の関数
+// データ保存と復元
 function saveData(key, value) {
     localStorage.setItem(`${key}_${tabId}`, value);
 }
@@ -29,8 +29,8 @@ function clearData() {
     localStorage.removeItem(`textInput_${tabId}`);
     localStorage.removeItem(`charCount_${tabId}`);
     localStorage.removeItem(`interval_${tabId}`);
-    localStorage.removeItem(`displayText_${tabId}`);
     localStorage.removeItem(`index_${tabId}`);
+    localStorage.removeItem(`displayText_${tabId}`);
     localStorage.removeItem(`isRunning_${tabId}`);
     localStorage.removeItem(`isPaused_${tabId}`);
 }
@@ -40,14 +40,18 @@ document.addEventListener("DOMContentLoaded", () => {
     textInput.value = loadData("textInput") || "";
     charCountInput.value = loadData("charCount") || 5;
     intervalInput.value = loadData("interval") || 0.5;
-    display.textContent = loadData("displayText") || "";
     index = parseInt(loadData("index"), 10) || 0;
+    const savedDisplay = loadData("displayText");
+
+    if (savedDisplay) {
+        display.textContent = savedDisplay; // 表示内容の復元
+    }
+
     isRunning = loadData("isRunning") === "true";
     isPaused = loadData("isPaused") === "true";
 
-    // 状態が再生中なら再開
     if (isRunning) {
-        startDisplay(true); // trueを渡して復元モードで実行
+        startDisplay(true); // 復元モードで再生を開始
         if (isPaused) {
             pauseDisplay();
         }
@@ -64,6 +68,8 @@ function startDisplay(isResuming = false) {
     pauseButton.disabled = false;
     stopButton.disabled = false;
 
+    saveData("isRunning", "true");
+
     const text = textInput.value;
     const charCount = parseInt(charCountInput.value, 10);
     const interval = parseFloat(intervalInput.value) * 1000;
@@ -78,7 +84,8 @@ function startDisplay(isResuming = false) {
 
         if (index < text.length) {
             display.textContent = text.slice(index, index + charCount);
-            saveDisplayContent(display.textContent); // 表示内容を保存
+            saveData("displayText", display.textContent); // 表示内容を保存
+            saveData("index", index); // 進捗を保存
             index += charCount;
             timeoutId = setTimeout(updateDisplay, interval);
         } else {
@@ -113,11 +120,6 @@ function stopDisplay() {
 startButton.addEventListener("click", () => startDisplay());
 pauseButton.addEventListener("click", pauseDisplay);
 stopButton.addEventListener("click", stopDisplay);
-
-// 入力保存
-textInput.addEventListener("input", () => saveData("textInput", textInput.value));
-charCountInput.addEventListener("input", () => saveData("charCount", charCountInput.value));
-intervalInput.addEventListener("input", () => saveData("interval", intervalInput.value));
 
 // 入力保存
 textInput.addEventListener("input", () => saveData("textInput", textInput.value));
