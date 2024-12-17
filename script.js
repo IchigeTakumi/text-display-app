@@ -64,8 +64,6 @@ function startDisplay(isResuming = false) {
     pauseButton.disabled = false;
     stopButton.disabled = false;
 
-    saveData("isRunning", "true");
-
     const text = textInput.value;
     const charCount = parseInt(charCountInput.value, 10);
     const interval = parseFloat(intervalInput.value) * 1000;
@@ -80,9 +78,8 @@ function startDisplay(isResuming = false) {
 
         if (index < text.length) {
             display.textContent = text.slice(index, index + charCount);
-            saveData("displayText", display.textContent); // 表示内容を保存
+            saveDisplayContent(display.textContent); // 表示内容を保存
             index += charCount;
-            saveData("index", index);
             timeoutId = setTimeout(updateDisplay, interval);
         } else {
             stopDisplay();
