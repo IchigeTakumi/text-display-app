@@ -3,6 +3,11 @@ let isPaused = false;
 let index = 0;
 let timeoutId;
 
+// タブIDの生成と保存
+const tabId = sessionStorage.getItem("tabId") || Date.now().toString();
+sessionStorage.setItem("tabId", tabId);
+
+// UI要素
 const textInput = document.getElementById("textInput");
 const charCountInput = document.getElementById("charCount");
 const intervalInput = document.getElementById("interval");
@@ -11,16 +16,54 @@ const startButton = document.getElementById("startButton");
 const pauseButton = document.getElementById("pauseButton");
 const stopButton = document.getElementById("stopButton");
 
+// 保存と復元
+function saveData(key, value) {
+    localStorage.setItem(`${key}_${tabId}`, value);
+}
+
+function loadData(key) {
+    return localStorage.getItem(`${key}_${tabId}`);
+}
+
+function clearData() {
+    localStorage.removeItem(`textInput_${tabId}`);
+    localStorage.removeItem(`charCount_${tabId}`);
+    localStorage.removeItem(`interval_${tabId}`);
+    localStorage.removeItem(`displayText_${tabId}`);
+    localStorage.removeItem(`index_${tabId}`);
+    localStorage.removeItem(`isRunning_${tabId}`);
+    localStorage.removeItem(`isPaused_${tabId}`);
+}
+
+// データ復元
+document.addEventListener("DOMContentLoaded", () => {
+    textInput.value = loadData("textInput") || "";
+    charCountInput.value = loadData("charCount") || 5;
+    intervalInput.value = loadData("interval") || 0.5;
+    display.textContent = loadData("displayText") || "";
+    index = parseInt(loadData("index"), 10) || 0;
+    isRunning = loadData("isRunning") === "true";
+    isPaused = loadData("isPaused") === "true";
+
+    if (isRunning) {
+        startDisplay();
+        if (isPaused) {
+            pauseDisplay();
+        }
+    }
+});
+
+// テキスト逐次表示機能
 function startDisplay() {
     if (isRunning) return;
 
     isRunning = true;
     isPaused = false;
-    index = 0;
-    display.textContent = "";
     startButton.disabled = true;
     pauseButton.disabled = false;
     stopButton.disabled = false;
+
+    saveData("isRunning", "true");
 
     const text = textInput.value;
     const charCount = parseInt(charCountInput.value, 10);
@@ -30,16 +73,18 @@ function startDisplay() {
         if (!isRunning) return;
 
         if (isPaused) {
-            timeoutId = setTimeout(updateDisplay, 100); // 再開待ち
+            timeoutId = setTimeout(updateDisplay, 100);
             return;
         }
 
         if (index < text.length) {
             display.textContent = text.slice(index, index + charCount);
+            saveData("displayText", display.textContent);
             index += charCount;
+            saveData("index", index);
             timeoutId = setTimeout(updateDisplay, interval);
         } else {
-            stopDisplay(); // 表示完了で停止
+            stopDisplay();
         }
     }
 
@@ -49,6 +94,7 @@ function startDisplay() {
 function pauseDisplay() {
     isPaused = !isPaused;
     pauseButton.textContent = isPaused ? "再開" : "一時停止";
+    saveData("isPaused", isPaused.toString());
 }
 
 function stopDisplay() {
@@ -57,6 +103,7 @@ function stopDisplay() {
     index = 0;
     display.textContent = "";
     clearTimeout(timeoutId);
+    clearData();
 
     startButton.disabled = false;
     pauseButton.disabled = true;
@@ -64,6 +111,13 @@ function stopDisplay() {
     pauseButton.textContent = "一時停止";
 }
 
+// イベントリスナー
 startButton.addEventListener("click", startDisplay);
 pauseButton.addEventListener("click", pauseDisplay);
 stopButton.addEventListener("click", stopDisplay);
+
+// 入力保存
+textInput.addEventListener("input", () => saveData("textInput", textInput.value));
+charCountInput.addEventListener("input", () => saveData("charCount", charCountInput.value));
+intervalInput.addEventListener("input", () => saveData("interval", intervalInput.value));
+
