@@ -121,4 +121,3 @@ stopButton.addEventListener("click", stopDisplay);
 textInput.addEventListener("input", () => saveData("textInput", textInput.value));
 charCountInput.addEventListener("input", () => saveData("charCount", charCountInput.value));
 intervalInput.addEventListener("input", () => saveData("interval", intervalInput.value));
-
