@@ -17,6 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (savedDisplay !== null) {
         document.getElementById("display").textContent = savedDisplay; // 表示内容を反映
     }
+    if (savedDisplayText !== null) {
+        document.getElementById("display").textContent = savedDisplayText; // 表示内容を復元
+    }
 });
 
 // 入力値を保存
@@ -37,6 +40,10 @@ function saveDisplayContent(content) {
     localStorage.setItem("displayText", content);
 }
 
+// 表示内容を保存する処理
+function saveDisplayContent(content) {
+    localStorage.setItem("displayText", content);
+}
 // 停止時にローカルストレージをクリア
 document.getElementById("stopButton").addEventListener("click", () => {
     localStorage.removeItem("textInput");
