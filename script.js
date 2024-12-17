@@ -74,24 +74,24 @@ function startDisplay(isResuming = false) {
     const charCount = parseInt(charCountInput.value, 10);
     const interval = parseFloat(intervalInput.value) * 1000;
 
-    function updateDisplay() {
-        if (!isRunning) return;
+   function updateDisplay() {
+    if (!isRunning) return;
 
-        if (isPaused) {
-            timeoutId = setTimeout(updateDisplay, 100);
-            return;
-        }
-
-        if (index < text.length) {
-            display.textContent = text.slice(index, index + charCount);
-            saveData("displayText", display.textContent); // 表示内容を保存
-            saveData("index", index); // 進捗を保存
-            index += charCount;
-            timeoutId = setTimeout(updateDisplay, interval);
-        } else {
-            stopDisplay();
-        }
+    if (isPaused) {
+        timeoutId = setTimeout(updateDisplay, 100);
+        return;
     }
+
+    if (index < text.length) {
+        display.textContent = text.slice(index, index + charCount);
+        saveDisplayContent(display.textContent); // 表示内容を保存
+        index += charCount;
+        timeoutId = setTimeout(updateDisplay, interval);
+    } else {
+        stopDisplay();
+    }
+}
+
 
     updateDisplay();
 }
