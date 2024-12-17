@@ -80,7 +80,7 @@ function startDisplay(isResuming = false) {
 
         if (index < text.length) {
             display.textContent = text.slice(index, index + charCount);
-            saveData("displayText", display.textContent);
+            saveData("displayText", display.textContent); // 表示内容を保存
             index += charCount;
             saveData("index", index);
             timeoutId = setTimeout(updateDisplay, interval);
@@ -116,6 +116,11 @@ function stopDisplay() {
 startButton.addEventListener("click", () => startDisplay());
 pauseButton.addEventListener("click", pauseDisplay);
 stopButton.addEventListener("click", stopDisplay);
+
+// 入力保存
+textInput.addEventListener("input", () => saveData("textInput", textInput.value));
+charCountInput.addEventListener("input", () => saveData("charCount", charCountInput.value));
+intervalInput.addEventListener("input", () => saveData("interval", intervalInput.value));
 
 // 入力保存
 textInput.addEventListener("input", () => saveData("textInput", textInput.value));
