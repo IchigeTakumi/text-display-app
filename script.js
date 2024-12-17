@@ -16,7 +16,7 @@ const startButton = document.getElementById("startButton");
 const pauseButton = document.getElementById("pauseButton");
 const stopButton = document.getElementById("stopButton");
 
-// 保存と復元
+// データ保存と復元の関数
 function saveData(key, value) {
     localStorage.setItem(`${key}_${tabId}`, value);
 }
@@ -35,7 +35,7 @@ function clearData() {
     localStorage.removeItem(`isPaused_${tabId}`);
 }
 
-// データ復元
+// ページロード時の状態復元
 document.addEventListener("DOMContentLoaded", () => {
     textInput.value = loadData("textInput") || "";
     charCountInput.value = loadData("charCount") || 5;
@@ -45,8 +45,9 @@ document.addEventListener("DOMContentLoaded", () => {
     isRunning = loadData("isRunning") === "true";
     isPaused = loadData("isPaused") === "true";
 
+    // 状態が再生中なら再開
     if (isRunning) {
-        startDisplay();
+        startDisplay(true); // trueを渡して復元モードで実行
         if (isPaused) {
             pauseDisplay();
         }
@@ -54,8 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // テキスト逐次表示機能
-function startDisplay() {
-    if (isRunning) return;
+function startDisplay(isResuming = false) {
+    if (isRunning && !isResuming) return;
 
     isRunning = true;
     isPaused = false;
@@ -112,7 +113,7 @@ function stopDisplay() {
 }
 
 // イベントリスナー
-startButton.addEventListener("click", startDisplay);
+startButton.addEventListener("click", () => startDisplay());
 pauseButton.addEventListener("click", pauseDisplay);
 stopButton.addEventListener("click", stopDisplay);
 
