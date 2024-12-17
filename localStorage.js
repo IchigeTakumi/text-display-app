@@ -1,9 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 保存済みデータの復元
-    const savedText = localStorage.getItem("textInput");
-    const savedCharCount = localStorage.getItem("charCount");
-    const savedInterval = localStorage.getItem("interval");
-    const savedDisplay = localStorage.getItem("displayText"); // 表示内容を復元
+    // タブIDの取得
+    const tabId = sessionStorage.getItem("tabId") || Date.now().toString();
+    sessionStorage.setItem("tabId", tabId);
+
+    // 保存済みデータの復元（タブIDに基づく）
+    const savedText = localStorage.getItem(`textInput_${tabId}`);
+    const savedCharCount = localStorage.getItem(`charCount_${tabId}`);
+    const savedInterval = localStorage.getItem(`interval_${tabId}`);
+    const savedDisplay = localStorage.getItem(`displayText_${tabId}`);
 
     if (savedText !== null) {
         document.getElementById("textInput").value = savedText;
@@ -15,39 +19,37 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("interval").value = savedInterval;
     }
     if (savedDisplay !== null) {
-        document.getElementById("display").textContent = savedDisplay; // 表示内容を反映
-    }
-    if (savedDisplayText !== null) {
-        document.getElementById("display").textContent = savedDisplayText; // 表示内容を復元
+        document.getElementById("display").textContent = savedDisplay;
     }
 });
 
-// 入力値を保存
+// 入力値を保存（タブIDごとに保存）
 document.getElementById("textInput").addEventListener("input", () => {
-    localStorage.setItem("textInput", document.getElementById("textInput").value);
+    const tabId = sessionStorage.getItem("tabId");
+    localStorage.setItem(`textInput_${tabId}`, document.getElementById("textInput").value);
 });
 
 document.getElementById("charCount").addEventListener("input", () => {
-    localStorage.setItem("charCount", document.getElementById("charCount").value);
+    const tabId = sessionStorage.getItem("tabId");
+    localStorage.setItem(`charCount_${tabId}`, document.getElementById("charCount").value);
 });
 
 document.getElementById("interval").addEventListener("input", () => {
-    localStorage.setItem("interval", document.getElementById("interval").value);
+    const tabId = sessionStorage.getItem("tabId");
+    localStorage.setItem(`interval_${tabId}`, document.getElementById("interval").value);
 });
 
 // 表示内容を保存
 function saveDisplayContent(content) {
-    localStorage.setItem("displayText", content);
+    const tabId = sessionStorage.getItem("tabId");
+    localStorage.setItem(`displayText_${tabId}`, content);
 }
 
-// 表示内容を保存する処理
-function saveDisplayContent(content) {
-    localStorage.setItem("displayText", content);
-}
-// 停止時にローカルストレージをクリア
+// 停止時にタブIDごとのデータを削除
 document.getElementById("stopButton").addEventListener("click", () => {
-    localStorage.removeItem("textInput");
-    localStorage.removeItem("charCount");
-    localStorage.removeItem("interval");
-    localStorage.removeItem("displayText"); // 表示内容を削除
+    const tabId = sessionStorage.getItem("tabId");
+    localStorage.removeItem(`textInput_${tabId}`);
+    localStorage.removeItem(`charCount_${tabId}`);
+    localStorage.removeItem(`interval_${tabId}`);
+    localStorage.removeItem(`displayText_${tabId}`);
 });
