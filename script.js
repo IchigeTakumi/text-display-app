@@ -16,13 +16,14 @@ const startButton = document.getElementById("startButton");
 const pauseButton = document.getElementById("pauseButton");
 const stopButton = document.getElementById("stopButton");
 
-// データ保存と復元
+// データ保存
 function saveData(key, value) {
-    localStorage.setItem(`${key}_${tabId}`, value);
+    localStorage.setItem(`${key}_${tabId}`, value); // タブごとのIDを含めて保存
 }
 
+// データ読み込み
 function loadData(key) {
-    return localStorage.getItem(`${key}_${tabId}`);
+    return localStorage.getItem(`${key}_${tabId}`); // タブIDに関連付けて読み込む
 }
 
 function clearData() {
@@ -35,26 +36,24 @@ function clearData() {
     localStorage.removeItem(`isPaused_${tabId}`);
 }
 
-// ページロード時の状態復元
+// ページ読み込み時の復元処理
 document.addEventListener("DOMContentLoaded", () => {
     textInput.value = loadData("textInput") || "";
     charCountInput.value = loadData("charCount") || 5;
     intervalInput.value = loadData("interval") || 0.5;
     index = parseInt(loadData("index"), 10) || 0;
-    const savedDisplay = loadData("displayText");
 
+    const savedDisplay = loadData("displayText");
     if (savedDisplay) {
-        display.textContent = savedDisplay; // 表示内容の復元
+        display.textContent = savedDisplay;
     }
 
     isRunning = loadData("isRunning") === "true";
     isPaused = loadData("isPaused") === "true";
 
     if (isRunning) {
-        startDisplay(true); // 復元モードで再生を開始
-        if (isPaused) {
-            pauseDisplay();
-        }
+        startDisplay(true);
+        if (isPaused) pauseDisplay();
     }
 });
 
